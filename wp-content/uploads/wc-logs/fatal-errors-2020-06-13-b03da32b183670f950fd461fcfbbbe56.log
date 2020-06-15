@@ -1,0 +1,9 @@
+2020-06-13T15:34:35+00:00 CRITICAL Uncaught Error: Call to a member function getCode() on null in /home/forge/iglesiafamiliarcristiana.org/wp-content/plugins/post-smtp/Postman/Postman-Send-Test-Email/PostmanSendTestEmailController.php:267
+Stack trace:
+#0 /home/forge/iglesiafamiliarcristiana.org/wp-includes/class-wp-hook.php(287): PostmanSendTestEmailAjaxController->sendTestEmailViaAjax('')
+#1 /home/forge/iglesiafamiliarcristiana.org/wp-includes/class-wp-hook.php(311): WP_Hook->apply_filters('', Array)
+#2 /home/forge/iglesiafamiliarcristiana.org/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#3 /home/forge/iglesiafamiliarcristiana.org/wp-admin/admin-ajax.php(175): do_action('wp_ajax_postman...')
+#4 {main}
+  thrown en /home/forge/iglesiafamiliarcristiana.org/wp-content/plugins/post-smtp/Postman/Postman-Send-Test-Email/PostmanSendTestEmailController.php en la línea 267
+
