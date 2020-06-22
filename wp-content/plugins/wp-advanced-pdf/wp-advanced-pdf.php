@@ -63,17 +63,17 @@ if (! class_exists ( 'wpppdf' )) {
 			add_action ( 'wp_enqueue_scripts', array ( &$this,	'ptp_ptpdf_theme_scripts' ) );
 			add_action ( 'wp_ajax_nopriv_postajax_exportandmail', array (&$this, 'postajax_exportandmail_handle' ) );
 			add_action('wp_ajax_wpppdf_send_mail',array(&$this,'wpppdf_send_mail'));
-
+			
 			register_activation_hook ( __FILE__, array ( &$this, 'ptp_export_install' ) );
 			add_action ( 'wp_head', array (	&$this,	'ptp_hook_div_for_guest' ) );
 			add_action ( 'init', array ( &$this, 'ptp_init_theme_method' ) );
-
+			
 			/**
 			 * ADD FOLLOWING ACTION OR FITER INTO YOU MAIN CLASS FILE
 			 */
-
+			
 			add_action ( 'plugins_loaded', array ( $this, 'load_textdomain' ) );
-			add_filter ( 'plugin_row_meta', array (	$this, 'ptp_custom_plugin_row_meta'	), 10, 2 );
+			add_filter ( 'plugin_row_meta', array (	$this, 'ptp_custom_plugin_row_meta'	), 10, 2 );	
 			add_action ( 'wp_ajax_add_custom_font', array (	$this,'ptp_add_custom_font' ) );
 
 			if( isset( $this->options[ 'postPublish' ] ) ) {
@@ -92,7 +92,7 @@ if (! class_exists ( 'wpppdf' )) {
 				$message = 'This user of our woocommerce extension "WP Advanced PDF" wants to know more about marketplace extensions.<br>';
 				$message .= 'Email of user : '.$_POST["emailid"];
 				$headers = array('Content-Type: text/html; charset=UTF-8');
-				$flag = wp_mail( $to, $subject, $message);
+				$flag = wp_mail( $to, $subject, $message);	
 				if($flag == 1)
 				{
 					echo json_encode(array('status'=>true,'msg'=>__('Soon you will receive the more details of this extension on the given mail.',"wp-advanced-pdf")));
@@ -108,7 +108,7 @@ if (! class_exists ( 'wpppdf' )) {
 			}
 			wp_die();
 		}
-
+		
 		/**
 		 * Add custom plugin row meta
 		 * @param array $links
@@ -124,21 +124,21 @@ if (! class_exists ( 'wpppdf' )) {
 			}
 			return $links;
 		}
-
+		
 		function load_textdomain() {
 			$domain = "wp-advanced-pdf";
 			$locale = apply_filters ( 'plugin_locale', get_locale (), $domain );
 			load_textdomain ( $domain, PTPDF_PATH . '/languages/' . $domain . '-' . $locale . '.mo' );
 			load_plugin_textdomain ( 'wp-advanced-pdf', false, plugin_basename ( dirname ( __FILE__ ) ) . '/languages' );
 		}
-
+		
 		/**
 		 * Step 1: add the custom Bulk Action to the select menus
 		 */
 		function ptp_custom_bulk_admin_footer() {
-
+			
 		}
-
+		
 		/**
 		 * Step 2: handle the custom Bulk Action
 		 *
@@ -152,7 +152,7 @@ if (! class_exists ( 'wpppdf' )) {
 				$wp_list_table = _get_list_table ( 'WP_Posts_List_Table' ); // depending on your resource type this could be WP_Users_List_Table, WP_Comments_List_Table, etc
 				$action = $wp_list_table->current_action ();
 				$allowed_actions = array (
-						"export"
+						"export" 
 				);
 				if (! in_array ( $action, $allowed_actions ))
 					return;
@@ -169,7 +169,7 @@ if (! class_exists ( 'wpppdf' )) {
 						'exported',
 						'untrashed',
 						'deleted',
-						'ids'
+						'ids' 
 				), wp_get_referer () );
 				if (! $sendback)
 					$sendback = admin_url ( "edit.php?post_type=$post_type" );
@@ -184,13 +184,13 @@ if (! class_exists ( 'wpppdf' )) {
 						}
 						if ($exported)
 							$this->ptp_generate_pdf_bulk_posts ( $post_ids );
-
+						
 						$sendback = add_query_arg ( array (
 								'exported' => $exported,
-								'ids' => join ( ',', $post_ids )
+								'ids' => join ( ',', $post_ids ) 
 						), $sendback );
 						break;
-
+					
 					default :
 						return;
 				}
@@ -204,9 +204,9 @@ if (! class_exists ( 'wpppdf' )) {
 						'_status',
 						'post',
 						'bulk_edit',
-						'post_view'
+						'post_view' 
 				), $sendback );
-
+				
 				wp_redirect ( $sendback );
 				exit ();
 			}
@@ -216,38 +216,38 @@ if (! class_exists ( 'wpppdf' )) {
 		 */
 		function ptp_custom_bulk_admin_notices() {
 			global $post_type, $pagenow;
-
+			
 			if ($pagenow == 'edit.php' && isset ( $this->options [$post_type] ) && isset ( $_REQUEST ['exported'] ) && ( int ) $_REQUEST ['exported']) {
 				$message = sprintf ( _n ( 'Post exported.', '%s posts exported.', $_REQUEST ['exported'] ), number_format_i18n ( $_REQUEST ['exported'] ) );
 				echo "<div class=\"updated\"><p>{$message}</p></div>";
 			}
 		}
 
-		function ced_admin_notices() {
+		function ced_admin_notices() { 
 			global $post_type, $pagenow;
 			if ($pagenow == 'post.php' && isset($_SESSION['mail']) && $_SESSION['mail'] == 1 ) {
 				?>
 				<div data-dismissible="disable-done-notice-forever" class="update notice notice-success is-dismissible">
 		        <p><?php _e( 'MAIL SENT!', 'sample-text-domain' ); ?></p>
 		    	</div>
-			<?php 	unset($_SESSION['mail']);
+			<?php 	unset($_SESSION['mail']); 
 			}
-
+			
 			else if ($pagenow == 'post.php' && isset($_SESSION['notmail']) && $_SESSION['notmail'] == 1 ) {
 				?>
 				<div data-dismissible="disable-done-notice-forever" class="error notice notice-success is-dismissible">
 		        <p><?php _e( 'NOT SENT!', 'sample-text-domain' ); ?></p>
 		    	</div>
-			<?php 	unset($_SESSION['notmail']);
+			<?php 	unset($_SESSION['notmail']); 
 			}
 
 		}
 
-
-
+		
+		
 		/**
 		 * Sends postid to function ptp_generate_pdf_file_bulk and generates output
-		 *
+		 * 
 		 * @param array $post_ids
 		 *        	an array of postIDs of which to export into pdf
 		 */
@@ -258,11 +258,11 @@ if (! class_exists ( 'wpppdf' )) {
 			$this->ptp_generate_pdf_file_bulk ( $post_ids );
 			$output = $this->output_Post_to_pdf_file ( $filePath, $fileName, $fileMime );
 		}
-
+		
 		/**
 		 * Generates pdf of an array of posts
-		 *
-		 * @param array $post_ids
+		 * 
+		 * @param array $post_ids        	
 		 */
 		function ptp_generate_pdf_file_bulk($post_ids) {
 				// include only once class library
@@ -278,12 +278,12 @@ if (! class_exists ( 'wpppdf' )) {
 			$filePath = CACHE_DIR . '/' . 'bulk' . '.pdf';
 			require_once PTPDF_PATH . '/export/adminbulk.php';
 		}
-
+		
 		/**
 		 * Adds exportpdf link for post type page and custom types
-		 *
-		 * @param array $actions
-		 * @param int $post
+		 * 
+		 * @param array $actions        	
+		 * @param int $post        	
 		 * @return array|string
 		 */
 		function ptp_add_export_to_pdf_option_hier($actions, $post) {
@@ -296,12 +296,12 @@ if (! class_exists ( 'wpppdf' )) {
 			}
 			return $actions;
 		}
-
+		
 		/**
 		 * adds exportpdf link for post type post
-		 *
-		 * @param array $actions
-		 * @param int $post
+		 * 
+		 * @param array $actions        	
+		 * @param int $post        	
 		 * @return array|string
 		 */
 		function ptp_add_export_to_pdf_option_nhier($actions, $post) {
@@ -314,10 +314,10 @@ if (! class_exists ( 'wpppdf' )) {
 			return $actions;
 		}
 		function ptp_init_theme_method() {
-
+			
 			add_thickbox ();
 		}
-
+		
 		/**
 		 * Adds an div for popup to guest users
 		 */
@@ -328,7 +328,7 @@ if (! class_exists ( 'wpppdf' )) {
 			$output = '<div id="examplePopup1" style="display:none;">' . $html . '</div>';
 			echo $output;
 		}
-
+		
 		/**
 		 * enqueue scripts for ajax requests
 		 */
@@ -340,7 +340,7 @@ if (! class_exists ( 'wpppdf' )) {
 					'baseUrl'  => PTPDF_URL
 			) );
 		}
-
+		
 		/**
 		 * enqueue custom script for admin option pages
 		 */
@@ -356,7 +356,7 @@ if (! class_exists ( 'wpppdf' )) {
 					$post_export = true;
 				}
 			}
-
+				
 			wp_enqueue_script ( 'bulk', PTPDF_URL . '/asset/js/bulk.js' , array(),  PDF_VERSION_NO );
 			$translation_array = array(
 					'txt' => __( 'Export', 'wp-advanced-pdf' ),
@@ -370,7 +370,7 @@ if (! class_exists ( 'wpppdf' )) {
 				if (! isset ( $this->options [$post->post_type] ))
 					return false;
 				if ('pdf' == (isset ( $_GET ['format'] ) ? $_GET ['format'] : null)) {
-
+					
 					$post = get_post ();
 					$content = $post->the_content;
 					if ($this->options ['ced_file_name'] == 'post_name') {
@@ -392,25 +392,25 @@ if (! class_exists ( 'wpppdf' )) {
 				}
 			}
 		}
-
+		
 		/**
 		 * checks for update on admin init
 		 */
 		function ptp_on_admin_Init() {
 			register_setting ( PTPDF_PREFIX.'_options', PTPDF_PREFIX, array (
 					&$this,
-					'ptp_on_update_options'
+					'ptp_on_update_options' 
 			) );
 			add_action ( 'admin_enqueue_scripts', array (
 					&$this,
-					'ptp_enqueue_custom_script'
+					'ptp_enqueue_custom_script' 
 			) );
 		}
-
+		
 		/**
 		 * Reset PDF Setting currently updating
-		 *
-		 * @param int $post
+		 * 
+		 * @param int $post        	
 		 * @return int
 		 */
 		function ptp_on_update_options($option) {
@@ -421,17 +421,17 @@ if (! class_exists ( 'wpppdf' )) {
 			array_unshift ( $action_links, $settings_link );
 			return $action_links;
 		}
-
+		
 		/**
 		 * add an option page attached with a setting submenu
 		 */
 		function ptp_add_admin_menu() {
 			$option_page = add_options_page ( 'WP Advanced PDF Options', 'WP Advanced PDF', 'manage_options', plugin_basename ( __FILE__ ), array (
 					&$this,
-					'ptp_option_page_handler'
+					'ptp_option_page_handler' 
 			) );
 		}
-
+		
 		/**
 		 * attach option page to submenu
 		 */
@@ -442,7 +442,7 @@ if (! class_exists ( 'wpppdf' )) {
 				wp_die ( __ ( 'You do not have sufficient permissions to access this page', 'wp-advanced-pdf' ) );
 			require (PTPDF_PATH . '/pdf_options.php');
 		}
-
+		
 		function ptp_deafult_setting() {
 			$default = array (
 					'post' => 1,
@@ -481,14 +481,14 @@ if (! class_exists ( 'wpppdf' )) {
 			);
 			return $default;
 		}
-
+		
 		/**
 		 * sets default values in plugin activate
 		 */
 		function ptp_set_default_on_activate() {
 			// set dafault option on activate
 			$default = $this->ptp_deafult_setting();
-
+			
 			if (! get_option ( PTPDF_PREFIX )) {
 				add_option ( PTPDF_PREFIX, $default );
 			}
@@ -497,14 +497,14 @@ if (! class_exists ( 'wpppdf' )) {
 				@mkdir ( WP_CONTENT_DIR . '/uploads' );
 			}
 		}
-
+		
 		/**
 		 * generates pdf file of current post
-		 *
+		 * 
 		 * @return boolean
 		 */
 		function ptp_generate_post_to_pdf() {
-
+			
 			global $post;
 			if(http_response_code()!='404') {
 				if (! isset ( $this->options [$post->post_type] ))
@@ -530,20 +530,20 @@ if (! class_exists ( 'wpppdf' )) {
 					}
 					$output = $this->output_Post_to_pdf_file ( $filePath, $fileName, $fileMime );
 				}
-			}
+			}	
 		}
-
+		
 		/**
 		 * checks whether pdf for the post is in cache or not
-		 *
-		 * @param int $postID
-		 * @param string $useremailID
+		 * 
+		 * @param int $postID        	
+		 * @param string $useremailID        	
 		 * @return boolean
 		 */
 		function ptp_email_pdf($postID, $useremailID) {
 			$post = get_post ( $postID );
 			$content = $post->post_content;
-
+			
 			if ($this->options ['ced_file_name'] == 'post_name') {
 				$filePath = CACHE_DIR . '/' . $post->post_name . '.pdf';
 				$fileName = $post->post_name . '.pdf';
@@ -551,7 +551,7 @@ if (! class_exists ( 'wpppdf' )) {
 				$filePath = CACHE_DIR . '/' . $post->ID . '.pdf';
 				$fileName = $post->ID . '.pdf';
 			}
-
+			
 			$fileMime = 'pdf';
 			if (! isset ( $this->options ['includefromCache'] )) {
 				$this->generate_pdf_file_email ( $post->ID, $useremailID );
@@ -562,13 +562,13 @@ if (! class_exists ( 'wpppdf' )) {
 			}
 			// $output = $this->output_Post_to_pdf_file( $filePath, $fileName, $fileMime );
 		}
-
+		
 		/**
 		 * generate output of pdf generated
-		 *
-		 * @param string $pdffile
-		 * @param string $file_name
-		 * @param string $mimepdftype
+		 * 
+		 * @param string $pdffile        	
+		 * @param string $file_name        	
+		 * @param string $mimepdftype        	
 		 * @return boolean
 		 */
 		function output_Post_to_pdf_file($pdffile, $file_name, $mimepdftype = '') {
@@ -590,7 +590,7 @@ if (! class_exists ( 'wpppdf' )) {
 					"png" => "image/png",
 					"jpeg" => "image/jpg",
 					"jpg" => "image/jpg",
-					"php" => "text/plain"
+					"php" => "text/plain" 
 			);
 			if ($mimepdftype == '') {
 				$file_extension = strtolower ( substr ( strrchr ( $pdffile, "." ), 1 ) );
@@ -601,18 +601,18 @@ if (! class_exists ( 'wpppdf' )) {
 				}
 			}
 			@ob_end_clean ();
-
+			
 			if (ini_get ( 'zlib.output_compression' ))
 				ini_set ( 'zlib.output_compression', 'Off' );
 			header ( 'Content-Type: ' . $mimepdftype );
 			header ( 'Content-Disposition: attachment; filename="' . $file_name . '"' );
 			header ( "Content-Transfer-Encoding: binary" );
 			header ( 'Accept-Ranges: bytes' );
-
+			
 			header ( "Cache-control: private" );
 			header ( 'Pragma: private' );
 			header ( "Expires: tue, 26 aug 2015 05:00:00 GMT" );
-
+			
 			if (isset ( $_SERVER ['HTTP_RANGE'] )) {
 				list ( $a, $range ) = explode ( "=", $_SERVER ['HTTP_RANGE'], 2 );
 				list ( $range ) = explode ( ",", $range, 2 );
@@ -631,7 +631,7 @@ if (! class_exists ( 'wpppdf' )) {
 				$new_length = $size;
 				header ( "Content-Length: " . $size );
 			}
-
+			
 			$chunksize = 1 * (1024 * 1024);
 			$bytes_send = 0;
 			if ($pdffile = fopen ( $pdffile, 'r' )) {
@@ -648,12 +648,12 @@ if (! class_exists ( 'wpppdf' )) {
 				return false;
 			return true;
 		}
-
+		
 		/**
 		 * generate pdf of a post and send email to guest user
-		 *
-		 * @param int $postID
-		 * @param string $useremailID
+		 * 
+		 * @param int $postID        	
+		 * @param string $useremailID        	
 		 */
 		function generate_pdf_file_email($postID, $useremailID) {
 			$post = get_post ( $postID );
@@ -670,14 +670,14 @@ if (! class_exists ( 'wpppdf' )) {
 			$post->post_content = apply_filters ( 'the_post_export_content', $post->post_content );
 			$post->post_content = wpautop ( $post->post_content );
 			$post->post_content = do_shortcode ( $post->post_content );
-
+			
 			if ($this->options ['ced_file_name'] == 'post_name') {
 				$filePath = CACHE_DIR . '/' . $post->post_name . '.pdf';
 			} else {
 				$filePath = CACHE_DIR . '/' . $post->ID . '.pdf';
 			}
 			// new PDF document
-
+			
 			if (isset ( $this->options ['page_size'] )) {
 				$pagesize = ($this->options ['page_size']);
 			} else {
@@ -702,7 +702,7 @@ if (! class_exists ( 'wpppdf' )) {
 				$lg['a_meta_dir'] = 'rtl';
 				$lg['a_meta_language'] = 'fa';
 				$lg['w_page'] = 'page';
-
+					
 				// set some language-dependent strings (optional)
 				$pdf->setLanguageArray($lg);
 				$pdf->setRTL(true);
@@ -714,7 +714,7 @@ if (! class_exists ( 'wpppdf' )) {
 			} else {
 				$pdf_title = $post->post_title;
 			}
-
+			
 			//$pdf->SetTitle ( apply_filters ( 'the_post_title', $pdf_title ) );
 			// logo width calculation
 			if (isset ( $this->options ['page_header'] ) and ($this->options ['page_header']) == 'upload-image' and !empty ( $this->options ['logo_img_url'] )) {
@@ -738,7 +738,7 @@ if (! class_exists ( 'wpppdf' )) {
 				}
 			}
 			if (isset ( $this->options ['page_header'] ) and ($this->options ['page_header']) == 'None') {
-
+			
 				$logoImage_url="";
 				$logo_width="";
 			}
@@ -803,7 +803,7 @@ if (! class_exists ( 'wpppdf' )) {
 					$pdf->SetHeaderData ( $logoImage_url, $logo_width  );
 				}
 			}
-
+				
 			// set header and footer fonts
 			if (($this->options ['header_font_size']) > 0) {
 				$header_font_size = $this->options ['header_font_size'];
@@ -818,28 +818,28 @@ if (! class_exists ( 'wpppdf' )) {
 			$pdf->setHeaderFont ( array (
 					$this->options ['header_font_pdf'],
 					'',
-					$header_font_size
+					$header_font_size 
 			) );
 			$pdf->setFooterFont ( array (
 					$this->options ['footer_font_pdf'],
 					'',
-					$footer_font_size
+					$footer_font_size 
 			) );
-
+			
 			$pdf->SetDefaultMonospacedFont ( PDF_FONT_MONOSPACED );
-
+			
 			if (isset($this->options ['marginLeft']) ) {
 				$pdf->SetLeftMargin ( $this->options ['marginLeft'] );
 			} else {
 				$pdf->SetLeftMargin ( PDF_MARGIN_LEFT );
 			}
-
+			
 			if (isset($this->options ['marginRight'] )) {
 				$pdf->SetRightMargin ( $this->options ['marginRight'] );
 			} else {
 				$pdf->SetRightMargin ( PDF_MARGIN_RIGHT );
 			}
-
+			
 			if (isset($this->options ['marginTop'] )) {
 				$pdf->SetTopMargin ( $this->options ['marginTop'] );
 			} else {
@@ -850,7 +850,7 @@ if (! class_exists ( 'wpppdf' )) {
 			} else {
 				$pdf->SetHeaderMargin ( PDF_MARGIN_HEADER );
 			}
-
+			
 			if (isset($this->options ['footer_font_margin'] )) {
 				$pdf->SetFooterMargin ( $this->options ['footer_font_margin'] );
 				// set auto page breaks
@@ -860,18 +860,18 @@ if (! class_exists ( 'wpppdf' )) {
 				// set auto page breaks
 				$pdf->SetAutoPageBreak ( TRUE, PDF_MARGIN_FOOTER );
 			}
-
+			
 			if ($this->options ['imageScale'] > 0) {
 				$pdf->setImageScale ( $this->options ['imageScale'] );
 			} else {
 				$pdf->setImageScale ( PDF_IMAGE_SCALE_RATIO );
 			}
-
+			
 			// set default font subsetting mode
 			$pdf->setFontSubsetting ( true );
-
+			
 			$pdf->SetFont ( $this->options ['content_font_pdf'], '', $this->options ['content_font_size'], '', true );
-
+			
 			if (! empty ( $this->options ['bullet_img_url'] )) {
 				$temp = $this->options ['bullet_img_url'];
 				$temp = end ( explode ( '/', $temp ) );
@@ -879,11 +879,11 @@ if (! class_exists ( 'wpppdf' )) {
 				$listsymbol = 'img|' . $temp . '|' . $this->options ['custom_image_width'] . '|' . $this->options ['custom_image_height'] . '|' . $this->options ['bullet_img_url'];
 				$pdf->setLIsymbol ( $listsymbol );
 			}
-
+			
 			// Add a page
 			// This method has several options, check the source code documentation for more information.
 // 			$pdf->AddPage ();
-
+			
 			if ($this->options ['fontStretching']) {
 				$pdf->setFontStretching($this->options ['fontStretching']);
 			}
@@ -903,14 +903,14 @@ if (! class_exists ( 'wpppdf' )) {
 			}
 			$html .= "<body>";
 			$html .= "<h1 style=\"text-align:center\">".apply_filters ( 'the_post_title', $pdf_title )."</h1>";
-
+			
 			if (isset ( $this->options ['authorDetail'] ) and ! $this->options ['authorDetail'] == '') {
 				$author_id = $post->post_author;
 				$author_meta_key = $this->options ['authorDetail'];
 				$author = get_user_meta ( $author_id );
 				$html .= '<p><strong>Author : </strong>' . $author [$author_meta_key] [0] . '</p>';
 			}
-
+			
 			if (isset ( $this->options ['postCategories'] )) {
 				$categories = get_the_category ( $post->ID );
 				if ($categories) {
@@ -937,10 +937,10 @@ if (! class_exists ( 'wpppdf' )) {
 				$newDate = date ( "d-m-Y", strtotime ( $post->post_date ) );
 				$html .= '<p><strong>Date : </strong>' . $newDate . '</p>';
 			}
-
+			
 			// Set some content to print
 			//$html .= '<h1>' . html_entity_decode ( $pdf_title, ENT_QUOTES ) . '</h1>';
-
+			
 			// Display feachered image if set in config on page/post
 			if (isset ( $this->options ['show_feachered_image'] )) {
 				if (has_post_thumbnail ( $post->ID )) {
@@ -955,7 +955,7 @@ if (! class_exists ( 'wpppdf' )) {
 			$html .="</body>";
 			$dom = new simple_html_dom ();
 			$dom->load ( $html );
-
+			
 			foreach ( $dom->find ( 'img' ) as $e ) {
 				$exurl = ''; // external streams
 				$imsize = FALSE;
@@ -1001,7 +1001,7 @@ if (! class_exists ( 'wpppdf' )) {
 					} else {
 						$imgalign = 'none';
 					}
-
+					
 					$e->class = null;
 					$e->align = $imgalign;
 					if (isset ( $htmlimgalign )) {
@@ -1009,7 +1009,7 @@ if (! class_exists ( 'wpppdf' )) {
 					} else {
 						$e->style = 'float:' . $imgalign;
 					}
-
+					
 					if (strtolower ( substr ( $e->src, - 4 ) ) == '.svg') {
 						$e->src = null;
 						if($imgalign!='none'){
@@ -1030,13 +1030,13 @@ if (! class_exists ( 'wpppdf' )) {
 					'fillColor' => array (
 							255,
 							255,
-							200
+							200 
 					),
 					'strokeColor' => array (
 							255,
 							128,
-							128
-					)
+							128 
+					) 
 			) );
 			// Print text using writeHTML
 			$pdf->writeHTML ( $html, true, 0, true, 0 );
@@ -1044,18 +1044,18 @@ if (! class_exists ( 'wpppdf' )) {
 				$no_of_pages = $pdf->getNumPages ();
 				for($i = 1; $i <= $no_of_pages; $i ++) {
 					$pdf->setPage ( $i );
-
+					
 					// Get the page width/height
 					$myPageWidth = $pdf->getPageWidth ();
 					$myPageHeight = $pdf->getPageHeight ();
-
+					
 					// Find the middle of the page and adjust.
 					$myX = ($myPageWidth / 2) - 75;
 					$myY = ($myPageHeight / 2) + 25;
-
+					
 					// Set the transparency of the text to really light
 					$pdf->SetAlpha ( 0.09 );
-
+					
 					// Rotate 45 degrees and write the watermarking text
 					$pdf->StartTransform ();
 					$rotate_degr = isset ( $this->options ['rotate_water'] ) ? $this->options ['rotate_water'] : '45';
@@ -1065,7 +1065,7 @@ if (! class_exists ( 'wpppdf' )) {
 					$watermark_text = isset ( $this->options ['watermark_text'] ) ? $this->options ['watermark_text'] : '';
 					$pdf->Text ( $myX, $myY, $watermark_text );
 					$pdf->StopTransform ();
-
+					
 					// Reset the transparency to default
 					$pdf->SetAlpha ( 1 );
 				}
@@ -1075,7 +1075,7 @@ if (! class_exists ( 'wpppdf' )) {
 					$no_of_pages = $pdf->getNumPages ();
 					for($i = 1; $i <= $no_of_pages; $i ++) {
 						$pdf->setPage ( $i );
-
+						
 						$myPageWidth = $pdf->getPageWidth ();
 						$myPageHeight = $pdf->getPageHeight ();
 						$myX = ($myPageWidth / $myPageWidth) - 50; // WaterMark Positioning
@@ -1083,17 +1083,17 @@ if (! class_exists ( 'wpppdf' )) {
 						$ImageT = isset ( $this->options ['water_img_t'] ) ? $this->options ['water_img_t'] : '';
 						// Set the transparency of the text to really light
 						$pdf->SetAlpha ( $ImageT );
-
+						
 						// Rotate 45 degrees and write the watermarking text
 						$pdf->StartTransform ();
 						$ImageW = isset ( $this->options ['water_img_h'] ) ? $this->options ['water_img_h'] : '';
 						$ImageH = isset ( $this->options ['water_img_w'] ) ? $this->options ['water_img_w'] : '';
-
+						
 						$watermark_img = isset ( $this->options ['background_img_url'] ) ? $this->options ['background_img_url'] : '';
 						$pdf->Image ( $watermark_img, $myX, $myY, $ImageW, $ImageH, '', '', '', true, 150 );
-
+						
 						$pdf->StopTransform ();
-
+						
 						// Reset the transparency to default
 						$pdf->SetAlpha ( 1 );
 					}
@@ -1110,7 +1110,7 @@ if (! class_exists ( 'wpppdf' )) {
 			$headers = "from: $from ";
 			$message = 'Please download attached PDF ';
 			if (wp_mail ( $to, $subject, $message, $headers = '', $attachments = array (
-					$filePath
+					$filePath 
 			) )) {
 				$this->export_installdata ( $to );
 				$response = array( 'SENT' => true );
@@ -1120,14 +1120,14 @@ if (! class_exists ( 'wpppdf' )) {
 				wp_send_json($response);
 			}
 		}
-
+		
 		/**
 		 * generate pdf file of a post given as parameter
-		 *
-		 * @param int $postID
+		 * 
+		 * @param int $postID        	
 		 */
 		function generate_post_to_pdf_file($postID) {
-
+			
 			$logo_width = '';
 			$post = get_post ( $postID );
 			$content = $post->post_content;
@@ -1143,14 +1143,14 @@ if (! class_exists ( 'wpppdf' )) {
 			$post->post_content = apply_filters ( 'the_post_export_content', $post->post_content );
 			$post->post_content = wpautop ( $post->post_content );
 			$post->post_content = do_shortcode ( $post->post_content );
-
+			
 			if ($this->options ['ced_file_name'] == 'post_name') {
 				$filePath = CACHE_DIR . '/' . $post->post_name . '.pdf';
 			} else {
 				$filePath = CACHE_DIR . '/' . $post->ID . '.pdf';
 			}
 			// new PDF document
-
+			
 			if (isset ( $this->options ['page_size'] )) {
 				$pagesize = ($this->options ['page_size']);
 			} else {
@@ -1167,7 +1167,7 @@ if (! class_exists ( 'wpppdf' )) {
 				$orientation = PDF_PAGE_ORIENTATION;
 			}
 			$pdf = new CUSTOMPDF ( $orientation, $unit, $pagesize, true, 'UTF-8', false );
-
+			
 			if (!empty ( $this->options ['rtl_support'] )) {//die();
 				// set some language dependent data:
 				$lg = Array();
@@ -1175,12 +1175,12 @@ if (! class_exists ( 'wpppdf' )) {
 				$lg['a_meta_dir'] = 'rtl';
 				$lg['a_meta_language'] = 'fa';
 				$lg['w_page'] = 'page';
-
+					
 				// set some language-dependent strings (optional)
 				$pdf->setLanguageArray($lg);
 				$pdf->setRTL(true);
 			}
-
+			
 			// information about doc
 			$pdf->SetCreator ( 'Post to PDF plugin by CedCommerce with ' . PDF_CREATOR );
 			$pdf->SetAuthor ( get_bloginfo ( 'name' ) );
@@ -1189,12 +1189,12 @@ if (! class_exists ( 'wpppdf' )) {
 			} else {
 				$pdf_title = $post->post_title;
 			}
-
+			
 			//$pdf->SetTitle ( apply_filters ( 'the_post_title', $pdf_title ) );
-
+			
 			// logo width calculation
 			if (isset ( $this->options ['page_header'] ) and ($this->options ['page_header']) != 'None' and !empty ( $this->options ['logo_img_url'] )) {
-
+				
 				if ($this->options ['page_header'] == "upload-image") {
 					$logoImage_url = $this->options ['logo_img_url'];
 				}
@@ -1205,19 +1205,19 @@ if (! class_exists ( 'wpppdf' )) {
 					} else {
 						$logo_width = @ ( int ) ((12 * $infologo [0]) / $infologo [1]);
 					}
-				}
+				} 
 				catch(Exception $e){
 				  throw new Exception("Invalid Size Image..");
 				  echo "Exception:".$e->getMessage();
 				}
 			}
-
+			
 			if (isset ( $this->options ['page_header'] ) and ($this->options ['page_header']) == 'None') {
-
+			
 				$logoImage_url="";
 				$logo_width="";
 			}
-
+			
 			$blog_name = get_bloginfo ( 'name' );
 			$bolg_description = get_bloginfo ( 'description' );
 			$home_url = home_url ();
@@ -1227,10 +1227,10 @@ if (! class_exists ( 'wpppdf' )) {
 				$desc_status=isset($ptpdfoption_status['show_site_descR'])? $ptpdfoption_status['show_site_descR']: '' ;
 				$url_status=isset($ptpdfoption_status['show_site_URL'])? $ptpdfoption_status['show_site_URL']: '' ;
 			}
-
+			
 			// for PHP 5.4 or below set default header data
 			if (version_compare ( phpversion (), '5.4.0', '<' )) {
-				if ($name_status == '1' && $desc_status  == '1' && $url_status  == '1'){
+				if ($name_status == '1' && $desc_status  == '1' && $url_status  == '1'){ 
 					$pdf->SetHeaderData ( $logoImage_url, $logo_width, html_entity_decode ( $blog_name, ENT_COMPAT | ENT_HTML401 | ENT_QUOTES ), html_entity_decode ( $bolg_description . "\n" . $home_url, ENT_COMPAT | ENT_HTML401 | ENT_QUOTES )  );
 				}
 				if ($name_status == '1' && $desc_status  == '1' && $url_status  != '1'){
@@ -1255,7 +1255,7 @@ if (! class_exists ( 'wpppdf' )) {
 					$pdf->SetHeaderData ( $logoImage_url, $logo_width  );
 				}
 			} elseif(version_compare ( phpversion (), '5.4.0', '>' )) {
-				if ($name_status == '1' && $desc_status  == '1' && $url_status  == '1'){
+				if ($name_status == '1' && $desc_status  == '1' && $url_status  == '1'){ 
 					$pdf->SetHeaderData ( $logoImage_url, $logo_width, html_entity_decode ( $blog_name, ENT_COMPAT | ENT_HTML401 | ENT_QUOTES ), html_entity_decode ( $bolg_description . "\n" . $home_url, ENT_COMPAT | ENT_HTML401 | ENT_QUOTES )  );
 				}
 				if ($name_status == '1' && $desc_status  == '1' && $url_status  != '1'){
@@ -1280,7 +1280,7 @@ if (! class_exists ( 'wpppdf' )) {
 					$pdf->SetHeaderData ( $logoImage_url, $logo_width  );
 				}
 			}
-
+			
 			// set header and footer fonts
 			if (($this->options ['header_font_size']) > 0) {
 				$header_font_size = $this->options ['header_font_size'];
@@ -1295,26 +1295,26 @@ if (! class_exists ( 'wpppdf' )) {
 			$pdf->setHeaderFont ( array (
 					$this->options ['header_font_pdf'],
 					'',
-					$header_font_size
+					$header_font_size 
 			) );
 			$pdf->setFooterFont ( array (
 					$this->options ['footer_font_pdf'],
 					'',
-					$footer_font_size
+					$footer_font_size 
 			) );
-
+			
 			if (isset($this->options ['marginLeft'])) {
 				$pdf->SetLeftMargin ( $this->options ['marginLeft'] );
 			} else {
 				$pdf->SetLeftMargin ( PDF_MARGIN_LEFT );
 			}
-
+			
 			if (isset($this->options ['marginRight'] )) {
 				$pdf->SetRightMargin ( $this->options ['marginRight'] );
 			} else {
 				$pdf->SetRightMargin ( PDF_MARGIN_RIGHT );
 			}
-
+			
 			if (isset($this->options ['marginTop'] )) {
 				$pdf->SetTopMargin ( $this->options ['marginTop'] );
 			} else {
@@ -1325,7 +1325,7 @@ if (! class_exists ( 'wpppdf' )) {
 			} else {
 				$pdf->SetHeaderMargin ( PDF_MARGIN_HEADER );
 			}
-
+			
 			if (isset($this->options ['footer_font_margin'] )) {
 				$pdf->SetFooterMargin ( $this->options ['footer_font_margin'] );
 				// set auto page breaks
@@ -1335,20 +1335,20 @@ if (! class_exists ( 'wpppdf' )) {
 				// set auto page breaks
 				$pdf->SetAutoPageBreak ( TRUE, PDF_MARGIN_FOOTER );
 			}
-
+			
 			// set image scale factor
-
+			
 			if ($this->options ['imageScale'] > 0) {
 				$pdf->setImageScale ( $this->options ['imageScale'] );
 			} else {
 				$pdf->setImageScale ( PDF_IMAGE_SCALE_RATIO );
 			}
-
+			
 			// set default font subsetting mode
 			$pdf->setFontSubsetting ( true );
-
+			
  			$pdf->SetFont ( $this->options ['content_font_pdf'], '', $this->options ['content_font_size'], '', true );
-
+			
 			if (! empty ( $this->options ['bullet_img_url'] )) {
 				$temp = $this->options ['bullet_img_url'];
 				$temp = end ( explode ( '/', $temp ) );
@@ -1357,8 +1357,8 @@ if (! class_exists ( 'wpppdf' )) {
 				$pdf->setLIsymbol ( $listsymbol );
 			}
 			// Add a page
-
-
+			
+			
 			if ($this->options ['fontStretching']) {
 				$pdf->setFontStretching($this->options ['fontStretching']);
 			}
@@ -1384,7 +1384,7 @@ if (! class_exists ( 'wpppdf' )) {
 				$author = get_user_meta ( $author_id );
 				$html .= '<p><strong>Author : </strong>' . $author [$author_meta_key] [0] . '</p>';
 			}
-
+			
 			if (isset ( $this->options ['postCategories'] )) {
 				$categories = get_the_category ( $post->ID );
 				if ($categories) {
@@ -1411,15 +1411,15 @@ if (! class_exists ( 'wpppdf' )) {
 				$newDate = date ( "d-m-Y", strtotime ( $post->post_date ) );
 				$html .= '<p><strong>Date : </strong>' . $newDate . '</p>';
 			}
-
+			
 			// Set some content to print
 			//$html .= '<h1>' . html_entity_decode ( $pdf_title, ENT_QUOTES ) . '</h1>';
-
+			
 			// Display feachered image if set in config on page/post
 			if (isset ( $this->options ['show_feachered_image'] )) {
 				if (has_post_thumbnail ( $post->ID )) {
 					$html .= get_the_post_thumbnail ( $post->ID );
-
+					
 				}
 			}
 			$post_content = $post->post_content;
@@ -1430,7 +1430,7 @@ if (! class_exists ( 'wpppdf' )) {
 			$html .="</body>";
 			$dom = new simple_html_dom ();
 			$dom->load ( $html );
-
+			
 			foreach ( $dom->find ( 'img' ) as $e ) {
 				$exurl = ''; // external streams
 				$imsize = FALSE;
@@ -1483,7 +1483,7 @@ if (! class_exists ( 'wpppdf' )) {
 					} else {
 						$e->style = 'float:' . $imgalign;
 					}
-
+					
 					if (strtolower ( substr ( $e->src, - 4 ) ) == '.svg') {
 						$e->src = null;
 						if($imgalign!='none'){
@@ -1513,33 +1513,33 @@ if (! class_exists ( 'wpppdf' )) {
 					'fillColor' => array (
 							255,
 							255,
-							200
+							200 
 					),
 					'strokeColor' => array (
 							255,
 							128,
-							128
-					)
+							128 
+					) 
 			) );
-
+			
 			// Print text using writeHTML
 			$pdf->writeHTML ( $html, true, 0, true, 0 );
 			if (isset ( $this->options ['add_watermark'] )) {
 				$no_of_pages = $pdf->getNumPages ();
 				for($i = 1; $i <= $no_of_pages; $i ++) {
 					$pdf->setPage ( $i );
-
+					
 					// Get the page width/height
 					$myPageWidth = $pdf->getPageWidth ();
 					$myPageHeight = $pdf->getPageHeight ();
-
+					
 					// Find the middle of the page and adjust.
 					$myX = ($myPageWidth / 2) - 75;
 					$myY = ($myPageHeight / 2) + 25;
-
+					
 					// Set the transparency of the text to really light
 					$pdf->SetAlpha ( 0.09 );
-
+					
 					// Rotate 45 degrees and write the watermarking text
 					$pdf->StartTransform ();
 					$rotate_degr = isset ( $this->options ['rotate_water'] ) ? $this->options ['rotate_water'] : '45';
@@ -1549,7 +1549,7 @@ if (! class_exists ( 'wpppdf' )) {
 					$watermark_text = isset ( $this->options ['watermark_text'] ) ? $this->options ['watermark_text'] : '';
 					$pdf->Text ( $myX, $myY, $watermark_text );
 					$pdf->StopTransform ();
-
+					
 					// Reset the transparency to default
 					$pdf->SetAlpha ( 1 );
 				}
@@ -1560,7 +1560,7 @@ if (! class_exists ( 'wpppdf' )) {
 					$no_of_pages = $pdf->getNumPages ();
 					for($i = 1; $i <= $no_of_pages; $i ++) {
 						$pdf->setPage ( $i );
-
+				
 						$myPageWidth = $pdf->getPageWidth ();
 						$myPageHeight = $pdf->getPageHeight ();
 						$myX = ($myPageWidth / $myPageWidth) - 50; // WaterMark Positioning
@@ -1568,22 +1568,22 @@ if (! class_exists ( 'wpppdf' )) {
 						$ImageT = isset ( $this->options ['water_img_t'] ) ? $this->options ['water_img_t'] : '';
 						// Set the transparency of the text to really light
 						$pdf->SetAlpha ( $ImageT );
-
+				
 						// Rotate 45 degrees and write the watermarking text
 						$pdf->StartTransform ();
 						$ImageW = isset ( $this->options ['water_img_h'] ) ? $this->options ['water_img_h'] : '';
 						$ImageH = isset ( $this->options ['water_img_w'] ) ? $this->options ['water_img_w'] : '';
-
+				
 						$watermark_img = isset ( $this->options ['background_img_url'] ) ? $this->options ['background_img_url'] : '';
 						$pdf->Image ( $watermark_img, $myX, $myY, $ImageW, $ImageH, '', '', '', true, 150 );
-
+				
 						$pdf->StopTransform ();
-
+				
 						// Reset the transparency to default
 						$pdf->SetAlpha ( 1 );
 					}
 				}
-
+					
 			}
 			// ---------------------------------------------------------
 			if (! is_dir ( CACHE_DIR )) {
@@ -1593,9 +1593,9 @@ if (! class_exists ( 'wpppdf' )) {
 			global $current_user;
 			if ($current_user) {
 				global $wp_version;
-				if ( $wp_version >= '4.5.0' )
+				if ( $wp_version >= '4.5.0' ) 
 				{
-					wp_get_current_user();
+					wp_get_current_user();        
 				}
 				else
 				{
@@ -1604,13 +1604,13 @@ if (! class_exists ( 'wpppdf' )) {
 				$this->export_installdata ( $current_user->user_email, $current_user->user_nicename );
 			}
 		}
-
+		
 		/**
 		 * adds a link button for selected post types by admin
 		 * this function adds different link for different sinerios
 		 * adds a checks whether to add link for the post type or not
-		 *
-		 * @param string $content
+		 * 
+		 * @param string $content        	
 		 * @return string
 		 */
 		function ptp_add_pdf_link($content) {
@@ -1621,23 +1621,23 @@ if (! class_exists ( 'wpppdf' )) {
 			if ('beforeandafter' == $this->options ['content_placement']) {
 				$content = '<div style="min-height: 30px;">' . $button . '</div>' . $content . '<div style="min-height: 30px;">' . $button . '</div>';
 			} elseif ('after' == $this->options ['content_placement']) {
-				$content = $content . '<div style="min-height: 0px;">' . $button . '</div>';
+				$content = $content . '<div style="min-height: 30px;">' . $button . '</div>';
 			} else {
 				$content = '<div style="min-height: 30px;">' . $button . '</div>' . $content;
 			}
 			return $content;
 		}
-
+		
 		/**
 		 * specifies the link to attach to pdf links
-		 *
+		 * 
 		 * @return void|boolean|string
 		 */
 		function ptp_pdf_icon() {
 			if (! isset ( $this->options ['front_end'] )) {
 				return;
 			}
-
+			
 			if (isset ( $this->options ['availability'] ) and $this->options ['availability'] == 'private' and ! is_user_logged_in ()) {
 				return;
 			}
@@ -1647,7 +1647,7 @@ if (! class_exists ( 'wpppdf' )) {
 			global $post;
 			if (! isset ( $this->options [$post->post_type] ))
 				return false;
-
+			
 			if (($this->options ['link_button'] == 'default')) {
 				$linkURL = PTPDF_URL . '/asset/images/pdf.png';
 			} else if (!empty ( $this->options ['custon_link_url'] )) {
@@ -1682,25 +1682,25 @@ if (! class_exists ( 'wpppdf' )) {
 				return $html;
 			}
 		}
-
+		
 		/**
 		 * adds custom interval for cache updation
 		 * can add multiple schedules
-		 *
-		 * @param array $schedules
+		 * 
+		 * @param array $schedules        	
 		 * @return multitype:NULL Ambigous <string, mixed>
 		 */
 		function ptp_pdfscheduleduration($schedules) {
 			if (isset ( $this->options ['cache_updation_sch'] ) && $this->options ['cache_updation_sch'] != 'none') {
 				$schedules ['cacheinterval'] = array (
 						'interval' => $this->options ['cache_updation_sch'],
-						'display' => __ ( 'PDF Cache Schedule Interval', 'wp-advanced-pdf' )
+						'display' => __ ( 'PDF Cache Schedule Interval', 'wp-advanced-pdf' ) 
 				);
 				update_option ( 'cron_cacheinterval', $this->options ['cache_updation_sch'] );
 			}
 			return $schedules;
 		}
-
+		
 		/**
 		 * schedule an event to update a cache if cache updation is set by admin
 		 * checks if already scheduled cache updation
@@ -1712,7 +1712,7 @@ if (! class_exists ( 'wpppdf' )) {
 				}
 			}
 		}
-
+		
 		/**
 		 * deactive scheduled event on plugin deactivation
 		 */
@@ -1722,7 +1722,7 @@ if (! class_exists ( 'wpppdf' )) {
 			// unschedule previous event if any
 			wp_unschedule_event ( $timestamp, 'schedulecacheupdate' );
 		}
-
+		
 		/**
 		 * updates cache
 		 * called by scheduled event
@@ -1738,7 +1738,7 @@ if (! class_exists ( 'wpppdf' )) {
 			$date_today = date ( "l" );
 			$date_from = date ( "Y-m-d H:i:s", strtotime ( $date_today ) - $interval );
 			$post_types = get_post_types ( array (
-					'public' => true
+					'public' => true 
 			), 'names' );
 			$post_types_all;
 			foreach ( $post_types as $post_type ) {
@@ -1751,7 +1751,7 @@ if (! class_exists ( 'wpppdf' )) {
 				$this->generate_post_to_pdf_file ( $post_id );
 			}
 		}
-
+		
 		/**
 		 * hooked for send email to guest users
 		 */
@@ -1767,16 +1767,16 @@ if (! class_exists ( 'wpppdf' )) {
 				}
 			}
 		}
-
+		
 		/**
 		 * creates a table to collect record of pdf generated
 		 */
 		function ptp_export_install() {
 			global $wpdb;
-
+			
 			$table_name = $wpdb->prefix . "ExporttoPDFRecord";
 			$charset_collate = $wpdb->get_charset_collate ();
-
+			
 			$sql = "CREATE TABLE $table_name (
 		   id mediumint(9) NOT NULL AUTO_INCREMENT,
 		   emailid varchar(100) NOT NULL,
@@ -1785,17 +1785,17 @@ if (! class_exists ( 'wpppdf' )) {
 		   useripaddr varchar(100) NOT NULL,
 		   UNIQUE KEY id (id)
 		   ) $charset_collate;";
-
+			
 			require_once (ABSPATH . 'wp-admin/includes/upgrade.php');
 			dbDelta ( $sql );
 			add_option ( "Export_db_version", "1.0" );
 		}
-
+		
 		/**
 		 * put data in the table
-		 *
-		 * @param string $emailid
-		 * @param string $userName
+		 * 
+		 * @param string $emailid        	
+		 * @param string $userName        	
 		 */
 		function export_installdata($emailid, $userName = 'guest') {
 			// Add some data to table
@@ -1821,21 +1821,21 @@ if (! class_exists ( 'wpppdf' )) {
 					'emailid' => $emailid,
 					'userName' => $userName,
 					'exportdate' => current_time ( 'mysql' ),
-					'useripaddr' => $userIPAddress
+					'useripaddr' => $userIPAddress 
 			) );
 		}
-
+		
 		function ptp_add_custom_font() {
-
+			
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return wp_send_json_error( 'You are not allow to do this.' );
 			}
-
+			
 			if(isset($_FILES)) {
 				if (! class_exists ( 'TCPDF' )) {
 					require_once PTPDF_PATH . '/tcpdf_min/tcpdf.php';
 				}
-
+				
 				$file = $_FILES[0]['tmp_name'];
 				$file_name = basename($_FILES[0]['name'], ".ttf");
 				if(file_exists($file)) {
@@ -1871,14 +1871,14 @@ if (! class_exists ( 'wpppdf' )) {
 				$post->post_content = apply_filters ( 'the_post_export_content', $post->post_content );
 				$post->post_content = wpautop ( $post->post_content );
 				$post->post_content = do_shortcode ( $post->post_content );
-
+				
 				if ($this->options ['ced_file_name'] == 'post_name') {
 					$filePath = CACHE_DIR . '/' . $post->post_name . '.pdf';
 				} else {
 					$filePath = CACHE_DIR . '/' . $post->ID . '.pdf';
 				}
 				// new PDF document
-
+				
 				if (isset ( $this->options ['page_size'] )) {
 					$pagesize = ($this->options ['page_size']);
 				} else {
@@ -1903,7 +1903,7 @@ if (! class_exists ( 'wpppdf' )) {
 					$lg['a_meta_dir'] = 'rtl';
 					$lg['a_meta_language'] = 'fa';
 					$lg['w_page'] = 'page';
-
+						
 					// set some language-dependent strings (optional)
 					$pdf->setLanguageArray($lg);
 					$pdf->setRTL(true);
@@ -1915,7 +1915,7 @@ if (! class_exists ( 'wpppdf' )) {
 				} else {
 					$pdf_title = $post->post_title;
 				}
-
+				
 				//$pdf->SetTitle ( apply_filters ( 'the_post_title', $pdf_title ) );
 				// logo width calculation
 				if (isset ( $this->options ['page_header'] ) and ($this->options ['page_header']) == 'upload-image' and !empty ( $this->options ['logo_img_url'] )) {
@@ -1939,7 +1939,7 @@ if (! class_exists ( 'wpppdf' )) {
 					}
 				}
 				if (isset ( $this->options ['page_header'] ) and ($this->options ['page_header']) == 'None') {
-
+				
 					$logoImage_url="";
 					$logo_width="";
 				}
@@ -2004,7 +2004,7 @@ if (! class_exists ( 'wpppdf' )) {
 						$pdf->SetHeaderData ( $logoImage_url, $logo_width  );
 					}
 				}
-
+					
 				// set header and footer fonts
 				if (($this->options ['header_font_size']) > 0) {
 					$header_font_size = $this->options ['header_font_size'];
@@ -2019,28 +2019,28 @@ if (! class_exists ( 'wpppdf' )) {
 				$pdf->setHeaderFont ( array (
 						$this->options ['header_font_pdf'],
 						'',
-						$header_font_size
+						$header_font_size 
 				) );
 				$pdf->setFooterFont ( array (
 						$this->options ['footer_font_pdf'],
 						'',
-						$footer_font_size
+						$footer_font_size 
 				) );
-
+				
 				$pdf->SetDefaultMonospacedFont ( PDF_FONT_MONOSPACED );
-
+				
 				if (isset($this->options ['marginLeft']) ) {
 					$pdf->SetLeftMargin ( $this->options ['marginLeft'] );
 				} else {
 					$pdf->SetLeftMargin ( PDF_MARGIN_LEFT );
 				}
-
+				
 				if (isset($this->options ['marginRight'] )) {
 					$pdf->SetRightMargin ( $this->options ['marginRight'] );
 				} else {
 					$pdf->SetRightMargin ( PDF_MARGIN_RIGHT );
 				}
-
+				
 				if (isset($this->options ['marginTop'] )) {
 					$pdf->SetTopMargin ( $this->options ['marginTop'] );
 				} else {
@@ -2051,7 +2051,7 @@ if (! class_exists ( 'wpppdf' )) {
 				} else {
 					$pdf->SetHeaderMargin ( PDF_MARGIN_HEADER );
 				}
-
+				
 				if (isset($this->options ['footer_font_margin'] )) {
 					$pdf->SetFooterMargin ( $this->options ['footer_font_margin'] );
 					// set auto page breaks
@@ -2061,18 +2061,18 @@ if (! class_exists ( 'wpppdf' )) {
 					// set auto page breaks
 					$pdf->SetAutoPageBreak ( TRUE, PDF_MARGIN_FOOTER );
 				}
-
+				
 				if ($this->options ['imageScale'] > 0) {
 					$pdf->setImageScale ( $this->options ['imageScale'] );
 				} else {
 					$pdf->setImageScale ( PDF_IMAGE_SCALE_RATIO );
 				}
-
+				
 				// set default font subsetting mode
 				$pdf->setFontSubsetting ( true );
-
+				
 				$pdf->SetFont ( $this->options ['content_font_pdf'], '', $this->options ['content_font_size'], '', true );
-
+				
 				if (! empty ( $this->options ['bullet_img_url'] )) {
 					$temp = $this->options ['bullet_img_url'];
 					$temp = end ( explode ( '/', $temp ) );
@@ -2080,11 +2080,11 @@ if (! class_exists ( 'wpppdf' )) {
 					$listsymbol = 'img|' . $temp . '|' . $this->options ['custom_image_width'] . '|' . $this->options ['custom_image_height'] . '|' . $this->options ['bullet_img_url'];
 					$pdf->setLIsymbol ( $listsymbol );
 				}
-
+				
 				// Add a page
 				// This method has several options, check the source code documentation for more information.
 	// 			$pdf->AddPage ();
-
+				
 				if ($this->options ['fontStretching']) {
 					$pdf->setFontStretching($this->options ['fontStretching']);
 				}
@@ -2104,14 +2104,14 @@ if (! class_exists ( 'wpppdf' )) {
 				}
 				$html .= "<body>";
 				$html .= "<h1 style=\"text-align:center\">".apply_filters ( 'the_post_title', $pdf_title )."</h1>";
-
+				
 				if (isset ( $this->options ['authorDetail'] ) and ! $this->options ['authorDetail'] == '') {
 					$author_id = $post->post_author;
 					$author_meta_key = $this->options ['authorDetail'];
 					$author = get_user_meta ( $author_id );
 					$html .= '<p><strong>Author : </strong>' . $author [$author_meta_key] [0] . '</p>';
 				}
-
+				
 				if (isset ( $this->options ['postCategories'] )) {
 					$categories = get_the_category ( $post->ID );
 					if ($categories) {
@@ -2138,10 +2138,10 @@ if (! class_exists ( 'wpppdf' )) {
 					$newDate = date ( "d-m-Y", strtotime ( $post->post_date ) );
 					$html .= '<p><strong>Date : </strong>' . $newDate . '</p>';
 				}
-
+				
 				// Set some content to print
 				//$html .= '<h1>' . html_entity_decode ( $pdf_title, ENT_QUOTES ) . '</h1>';
-
+				
 				// Display feachered image if set in config on page/post
 				if (isset ( $this->options ['show_feachered_image'] )) {
 					if (has_post_thumbnail ( $post->ID )) {
@@ -2156,7 +2156,7 @@ if (! class_exists ( 'wpppdf' )) {
 				$html .="</body>";
 				$dom = new simple_html_dom ();
 				$dom->load ( $html );
-
+				
 				foreach ( $dom->find ( 'img' ) as $e ) {
 					$exurl = ''; // external streams
 					$imsize = FALSE;
@@ -2202,7 +2202,7 @@ if (! class_exists ( 'wpppdf' )) {
 						} else {
 							$imgalign = 'none';
 						}
-
+						
 						$e->class = null;
 						$e->align = $imgalign;
 						if (isset ( $htmlimgalign )) {
@@ -2210,7 +2210,7 @@ if (! class_exists ( 'wpppdf' )) {
 						} else {
 							$e->style = 'float:' . $imgalign;
 						}
-
+						
 						if (strtolower ( substr ( $e->src, - 4 ) ) == '.svg') {
 							$e->src = null;
 							if($imgalign!='none'){
@@ -2231,13 +2231,13 @@ if (! class_exists ( 'wpppdf' )) {
 						'fillColor' => array (
 								255,
 								255,
-								200
+								200 
 						),
 						'strokeColor' => array (
 								255,
 								128,
-								128
-						)
+								128 
+						) 
 				) );
 				// Print text using writeHTML
 				$pdf->writeHTML ( $html, true, 0, true, 0 );
@@ -2245,18 +2245,18 @@ if (! class_exists ( 'wpppdf' )) {
 					$no_of_pages = $pdf->getNumPages ();
 					for($i = 1; $i <= $no_of_pages; $i ++) {
 						$pdf->setPage ( $i );
-
+						
 						// Get the page width/height
 						$myPageWidth = $pdf->getPageWidth ();
 						$myPageHeight = $pdf->getPageHeight ();
-
+						
 						// Find the middle of the page and adjust.
 						$myX = ($myPageWidth / 2) - 75;
 						$myY = ($myPageHeight / 2) + 25;
-
+						
 						// Set the transparency of the text to really light
 						$pdf->SetAlpha ( 0.09 );
-
+						
 						// Rotate 45 degrees and write the watermarking text
 						$pdf->StartTransform ();
 						$rotate_degr = isset ( $this->options ['rotate_water'] ) ? $this->options ['rotate_water'] : '45';
@@ -2266,7 +2266,7 @@ if (! class_exists ( 'wpppdf' )) {
 						$watermark_text = isset ( $this->options ['watermark_text'] ) ? $this->options ['watermark_text'] : '';
 						$pdf->Text ( $myX, $myY, $watermark_text );
 						$pdf->StopTransform ();
-
+						
 						// Reset the transparency to default
 						$pdf->SetAlpha ( 1 );
 					}
@@ -2276,7 +2276,7 @@ if (! class_exists ( 'wpppdf' )) {
 						$no_of_pages = $pdf->getNumPages ();
 						for($i = 1; $i <= $no_of_pages; $i ++) {
 							$pdf->setPage ( $i );
-
+							
 							$myPageWidth = $pdf->getPageWidth ();
 							$myPageHeight = $pdf->getPageHeight ();
 							$myX = ($myPageWidth / $myPageWidth) - 50; // WaterMark Positioning
@@ -2284,17 +2284,17 @@ if (! class_exists ( 'wpppdf' )) {
 							$ImageT = isset ( $this->options ['water_img_t'] ) ? $this->options ['water_img_t'] : '';
 							// Set the transparency of the text to really light
 							$pdf->SetAlpha ( $ImageT );
-
+							
 							// Rotate 45 degrees and write the watermarking text
 							$pdf->StartTransform ();
 							$ImageW = isset ( $this->options ['water_img_h'] ) ? $this->options ['water_img_h'] : '';
 							$ImageH = isset ( $this->options ['water_img_w'] ) ? $this->options ['water_img_w'] : '';
-
+							
 							$watermark_img = isset ( $this->options ['background_img_url'] ) ? $this->options ['background_img_url'] : '';
 							$pdf->Image ( $watermark_img, $myX, $myY, $ImageW, $ImageH, '', '', '', true, 150 );
-
+							
 							$pdf->StopTransform ();
-
+							
 							// Reset the transparency to default
 							$pdf->SetAlpha ( 1 );
 						}
@@ -2309,7 +2309,7 @@ if (! class_exists ( 'wpppdf' )) {
 				    	$args=array(
 				    		'role' => $value
 				    		);
-				    	$query = new WP_User_Query($args);
+				    	$query = new WP_User_Query($args); 
 				    	$authors = $query->get_results();
 				    	if(!empty($authors))
 				    	{
@@ -2323,18 +2323,18 @@ if (! class_exists ( 'wpppdf' )) {
 				    			$author_info = get_userdata($author->ID);
 				    			$to = $author_info->user_email;
 								if (wp_mail ( $to, $subject, $message, $headers = '', $attachments = array (
-										$filePath
+										$filePath 
 								) ))
 								{
 									$this->export_installdata ( $to );
-
+									
 									$_SESSION['mail'] = 1;
 									$response = array( 'SENT' => true );
 								}
 								else
 								{
 									$_SESSION['notmail'] = 1;
-									$response = array( 'NOTSENT' => true );
+									$response = array( 'NOTSENT' => true );								
 								}
 				    		}
 				    	}
