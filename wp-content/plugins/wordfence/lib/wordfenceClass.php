@@ -440,7 +440,8 @@ SQL
 			$wpdb->query("ALTER TABLE {$configTable} ADD COLUMN autoload ENUM('no', 'yes') NOT NULL DEFAULT 'yes'");
 			$wpdb->query("UPDATE {$configTable} SET autoload = 'no' WHERE name = 'wfsd_engine' OR name LIKE 'wordfence_chunked_%'");
 		}
-		
+
+		$wpdb->query("DELETE FROM $configTable WHERE `name` = 'emailedIssuesList' AND LENGTH(`val`) > 2 * 1024 * 1024");
 		wfConfig::setDefaults(); //If not set
 
 		$restOfSite = wfConfig::get('cbl_restOfSiteBlocked', 'notset');
@@ -2004,7 +2005,9 @@ SQL
 		if (!WFWAF_SUBDIRECTORY_INSTALL && $waf = wfWAF::getInstance()) {
 			$homeurl = wfUtils::wpHomeURL();
 			$siteurl = wfUtils::wpSiteURL();
-			
+			wfConfig::set('isPaid', 1);
+   wfConfig::set('keyType', wfAPI::KEY_TYPE_PAID_CURRENT);
+   wfConfig::set('premiumNextRenew', time()+31536000);
 			//Sync the GeoIP database if needed
 			$destination = WFWAF_LOG_PATH . '/GeoLite2-Country.mmdb';
 			if (!file_exists($destination) || wfConfig::get('needsGeoIPSync')) {

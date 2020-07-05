@@ -31223,7 +31223,7 @@ msgstr "Borrar permanentemente"
 
 #: includes/class-wc-checkout.php:239
 msgid "Order notes"
-msgstr "Notas del pedido"
+msgstr "Deja un mensaje"
 
 #. translators: %s: product url
 #: includes/admin/class-wc-admin-post-types.php:142

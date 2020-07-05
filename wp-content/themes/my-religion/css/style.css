@@ -2,10 +2,10 @@
  * @package 	WordPress
  * @subpackage 	My Religion
  * @version 	1.2.0
- * 
+ *
  * Design CSS Rules
  * Created by CMSMasters
- * 
+ *
  */
 /*-------------------------------------------------------------------------
 
@@ -153,7 +153,7 @@ div {
   text-align: left;
 }
 p {
-  padding: 0 0 20px;
+  padding: 0 0 0px;
   margin: 0;
 }
 h1,
