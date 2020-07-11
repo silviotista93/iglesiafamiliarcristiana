@@ -927,9 +927,9 @@ function get_comments_number_text( $zero = false, $one = false, $more = false, $
 			$output = str_replace( '%', number_format_i18n( $number ), $more );
 		}
 	} elseif ( 0 == $number ) {
-		$output = ( false === $zero ) ? __( 'No Comments' ) : $zero;
+		$output = ( false === $zero ) ? __( 'Sin comentarios' ) : $zero;
 	} else { // Must be one.
-		$output = ( false === $one ) ? __( '1 Comment' ) : $one;
+		$output = ( false === $one ) ? __( '1 comentario' ) : $one;
 	}
 	/**
 	 * Filters the comments count for display.
@@ -972,7 +972,7 @@ function get_comment_text( $comment_ID = 0, $args = array() ) {
 
 			$comment_content = sprintf(
 				/* translators: %s: Comment link. */
-				ent2ncr( __( 'In reply to %s.' ) ),
+				ent2ncr( __( 'En respuesta a %s.' ) ),
 				'<a href="' . $parent_link . '">' . $name . '</a>'
 			) . "\n\n" . $comment_content;
 		}
@@ -1647,10 +1647,10 @@ function get_comment_reply_link( $args = array(), $comment = null, $post = null 
 	$defaults = array(
 		'add_below'     => 'comment',
 		'respond_id'    => 'respond',
-		'reply_text'    => __( 'Reply' ),
+		'reply_text'    => __( 'Respuesta' ),
 		/* translators: Comment reply button text. %s: Comment author name. */
-		'reply_to_text' => __( 'Reply to %s' ),
-		'login_text'    => __( 'Log in to Reply' ),
+		'reply_to_text' => __( 'Responder a %s' ),
+		'login_text'    => __( 'Inicia sesión para responder' ),
 		'max_depth'     => 0,
 		'depth'         => 0,
 		'before'        => '',
@@ -1787,8 +1787,8 @@ function get_post_reply_link( $args = array(), $post = null ) {
 	$defaults = array(
 		'add_below'  => 'post',
 		'respond_id' => 'respond',
-		'reply_text' => __( 'Leave a Comment' ),
-		'login_text' => __( 'Log in to leave a Comment' ),
+		'reply_text' => __( 'Deja un comentario' ),
+		'login_text' => __( 'Ingrese para dejar un comentario' ),
 		'before'     => '',
 		'after'      => '',
 	);
@@ -1955,11 +1955,11 @@ function comment_form_title( $noreplytext = false, $replytext = false, $linktopa
 	global $comment;
 
 	if ( false === $noreplytext ) {
-		$noreplytext = __( 'Leave a Reply' );
+		$noreplytext = __( 'Deja una respuesta' );
 	}
 	if ( false === $replytext ) {
 		/* translators: %s: Author of the comment being replied to. */
-		$replytext = __( 'Leave a Reply to %s' );
+		$replytext = __( 'Dejar una respuesta a %s' );
 	}
 
 	$replytoid = isset( $_GET['replytocom'] ) ? (int) $_GET['replytocom'] : 0;
@@ -2305,7 +2305,7 @@ function comment_form( $args = array(), $post_id = null ) {
 			'<p class="comment-form-author">%s %s</p>',
 			sprintf(
 				'<label for="author">%s%s</label>',
-				__( 'Name' ),
+				__( 'Nombre' ),
 				( $req ? ' <span class="required">*</span>' : '' )
 			),
 			sprintf(
@@ -2353,7 +2353,7 @@ function comment_form( $args = array(), $post_id = null ) {
 			),
 			sprintf(
 				'<label for="wp-comment-cookies-consent">%s</label>',
-				__( 'Save my name, email, and website in this browser for the next time I comment.' )
+				__( 'Guarde mi nombre, correo electrónico y sitio web en este navegador para la próxima vez que comente.' )
 			)
 		);
 
@@ -2365,7 +2365,7 @@ function comment_form( $args = array(), $post_id = null ) {
 
 	$required_text = sprintf(
 		/* translators: %s: Asterisk symbol (*). */
-		' ' . __( 'Required fields are marked %s' ),
+		' ' . __( 'Los campos obligatorios están marcados %s' ),
 		'<span class="required">*</span>'
 	);
 
@@ -2392,7 +2392,7 @@ function comment_form( $args = array(), $post_id = null ) {
 			'<p class="must-log-in">%s</p>',
 			sprintf(
 				/* translators: %s: Login URL. */
-				__( 'You must be <a href="%s">logged in</a> to post a comment.' ),
+				__( 'Debes estar <a href="%s">conectado</a> para publicar un comentario.' ),
 				/** This filter is documented in wp-includes/link-template.php */
 				wp_login_url( apply_filters( 'the_permalink', get_permalink( $post_id ), $post_id ) )
 			)
@@ -2401,10 +2401,10 @@ function comment_form( $args = array(), $post_id = null ) {
 			'<p class="logged-in-as">%s</p>',
 			sprintf(
 				/* translators: 1: Edit user link, 2: Accessibility text, 3: User name, 4: Logout URL. */
-				__( '<a href="%1$s" aria-label="%2$s">Logged in as %3$s</a>. <a href="%4$s">Log out?</a>' ),
+				__( '<a href="%1$s" aria-label="%2$s">Conectado como %3$s</a>. <a href="%4$s">Cerrar sesión?</a>' ),
 				get_edit_user_link(),
 				/* translators: %s: User name. */
-				esc_attr( sprintf( __( 'Logged in as %s. Edit your profile.' ), $user_identity ) ),
+				esc_attr( sprintf( __( 'Conectado como %s. Edite su perfil.' ), $user_identity ) ),
 				$user_identity,
 				/** This filter is documented in wp-includes/link-template.php */
 				wp_logout_url( apply_filters( 'the_permalink', get_permalink( $post_id ), $post_id ) )
@@ -2414,7 +2414,7 @@ function comment_form( $args = array(), $post_id = null ) {
 			'<p class="comment-notes">%s%s</p>',
 			sprintf(
 				'<span id="email-notes">%s</span>',
-				__( 'Your email address will not be published.' )
+				__( 'Su dirección de correo electrónico no será publicada.' )
 			),
 			( $req ? $required_text : '' )
 		),
@@ -2425,15 +2425,15 @@ function comment_form( $args = array(), $post_id = null ) {
 		'class_form'           => 'comment-form',
 		'class_submit'         => 'submit',
 		'name_submit'          => 'submit',
-		'title_reply'          => __( 'Leave a Reply' ),
+		'title_reply'          => __( 'Deja una respuesta' ),
 		/* translators: %s: Author of the comment being replied to. */
-		'title_reply_to'       => __( 'Leave a Reply to %s' ),
+		'title_reply_to'       => __( 'Dejar una respuesta a %s' ),
 		'title_reply_before'   => '<h3 id="reply-title" class="comment-reply-title">',
 		'title_reply_after'    => '</h3>',
 		'cancel_reply_before'  => ' <small>',
 		'cancel_reply_after'   => '</small>',
-		'cancel_reply_link'    => __( 'Cancel reply' ),
-		'label_submit'         => __( 'Post Comment' ),
+		'cancel_reply_link'    => __( 'Cancelar Respuesta' ),
+		'label_submit'         => __( 'Publicar Comentario' ),
 		'submit_button'        => '<input name="%1$s" type="submit" id="%2$s" class="%3$s" value="%4$s" />',
 		'submit_field'         => '<p class="form-submit">%1$s %2$s</p>',
 		'format'               => 'xhtml',
